@@ -1,0 +1,56 @@
+hf_user: AmareshHebbar
+base_model: TinyLlama/TinyLlama_v1.1
+base_label: TinyLlama 1.1B
+repo_prefix: Stretch32K_TinyLlama_1.1B
+dataset_name: Stretch32K_Data_TinyLlama_1.1B
+private: false
+seed: 42
+gpu_cost_per_hour: 1.0
+
+collection:
+  title: Stretch32K
+  description: TinyLlama 1.1B stretched from 2k to long context on one GPU. PI, NTK, YaRN, LongLoRA and SFT on one table.
+
+paths:
+  work: /workspace/stretch32k_runs
+
+orig_len: 2048
+target_len: 16384
+
+train:
+  seq_len: 16384
+  steps: 150
+  grad_accum: 4
+  lr: 2.0e-5
+  embed_norm_lr: 2.0e-5
+  lora_lr: 2.0e-4
+  warmup_steps: 15
+  logits_chunk: 1024
+  s2_group: 4096
+
+lora:
+  r: 16
+  alpha: 32
+  targets: [q_proj, k_proj, v_proj, o_proj]
+
+sft:
+  init: auto
+  lr: 1.0e-5
+  epochs: 1
+  grad_accum: 8
+  warmup_steps: 5
+  train_n: 600
+  heldout_n: 30
+
+eval:
+  lengths: [1024, 2048, 4096, 8192, 16384]
+  ppl_docs: 4
+  haystack_books: 2
+  passkey_trials: 10
+  quick_trials: 5
+  needle_depths: [0.0, 0.25, 0.5, 0.75, 1.0]
+  needle_trials: 2
+  ruler_trials: 4
+  short_tasks: []
+  gate_short_ratio: 1.3
+  gate_target_ratio: 3.0
