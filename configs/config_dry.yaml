@@ -1,0 +1,60 @@
+hf_user: AmareshHebbar
+base_model: TinyLlama/TinyLlama_v1.1
+base_label: TinyLlama 1.1B
+repo_prefix: Stretch32KDRY_TinyLlama_1.1B
+dataset_name: Stretch32KDRY_Data_TinyLlama_1.1B
+private: true
+seed: 42
+gpu_cost_per_hour: 1.0
+collection:
+  title: Stretch32K dry run
+  description: Throwaway dry run of the Stretch32K pipeline. Safe to delete.
+paths:
+  work: /workspace/stretch32k_dry
+orig_len: 2048
+target_len: 8192
+train:
+  seq_len: 8192
+  steps: 4
+  grad_accum: 2
+  lr: 2.0e-05
+  embed_norm_lr: 2.0e-05
+  lora_lr: 0.0002
+  warmup_steps: 1
+  logits_chunk: 1024
+  s2_group: 2048
+lora:
+  r: 16
+  alpha: 32
+  targets:
+  - q_proj
+  - k_proj
+  - v_proj
+  - o_proj
+sft:
+  init: auto
+  lr: 1.0e-05
+  epochs: 1
+  grad_accum: 4
+  warmup_steps: 1
+  train_n: 60
+  heldout_n: 5
+eval:
+  lengths:
+  - 1024
+  - 2048
+  - 4096
+  - 8192
+  ppl_docs: 2
+  haystack_books: 1
+  passkey_trials: 2
+  quick_trials: 2
+  needle_depths:
+  - 0.0
+  - 0.5
+  - 1.0
+  needle_trials: 1
+  ruler_trials: 1
+  short_tasks: []
+  gate_short_ratio: 3.0
+  gate_target_ratio: 50.0
