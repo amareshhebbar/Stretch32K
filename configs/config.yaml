@@ -52,5 +52,5 @@ eval:
   needle_trials: 2
   ruler_trials: 4
   short_tasks: []
-  gate_short_ratio: 1.3
+  gate_short_ratio: 2.5
   gate_target_ratio: 3.0

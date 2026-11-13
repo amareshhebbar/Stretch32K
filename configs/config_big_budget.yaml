@@ -52,5 +52,5 @@ eval:
   needle_trials: 3
   ruler_trials: 10
   short_tasks: [hellaswag, arc_easy]
-  gate_short_ratio: 1.3
+  gate_short_ratio: 2.5
   gate_target_ratio: 3.0
