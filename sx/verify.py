@@ -29,13 +29,16 @@ def verify_model(cfg, name):
     local = wpath(cfg, "verify", name)
     if local.exists():
         shutil.rmtree(local)
-    snapshot_download(repo, local_dir=str(local), ignore_patterns=["training/*", "assets/*", "eval/*"], force_download=True)
-    conf = AutoConfig.from_pretrained(str(local))
-    rope = {"rope_theta": conf.rope_theta, "rope_scaling": conf.rope_scaling, "max_position_embeddings": conf.max_position_embeddings}
-    print(f"  rope settings from the hub config: {rope}", flush=True)
-    if conf.max_position_embeddings < cfg["target_len"] and not conf.rope_scaling:
-        raise SystemExit(f"verify {name}: hub config has no long context settings")
-    res = eval_model(cfg, name, "quick", str(local))
+    try:
+        snapshot_download(repo, local_dir=str(local), ignore_patterns=["training/*", "assets/*", "eval/*"], force_download=True)
+        conf = AutoConfig.from_pretrained(str(local))
+        rope = {"rope_theta": conf.rope_theta, "rope_scaling": conf.rope_scaling, "max_position_embeddings": conf.max_position_embeddings}
+        print(f"  rope settings from the hub config: {rope}", flush=True)
+        if conf.max_position_embeddings < cfg["target_len"] and not conf.rope_scaling:
+            raise SystemExit(f"verify {name}: hub config has no long context settings")
+        res = eval_model(cfg, name, "quick", str(local))
+    finally:
+        shutil.rmtree(local, ignore_errors=True)
     base = read_json(results_path(cfg, "base_none", "quick"))
     s = res["summary"]
     e = cfg["eval"]
